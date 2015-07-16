@@ -96,9 +96,8 @@ public class Field {
     }
 
     public void setCell(Cell cell) {
-	if (!cell.isOutOfBoundaries(this))
+	if (!cell.isOutOfBoundaries(this) && cell.getLocation().y >= 0)
 	    grid[cell.getLocation().y][cell.getLocation().x] = cell;
-	;
     }
 
     public int getNumberOfIsolatedCellsForRow(int y) {
