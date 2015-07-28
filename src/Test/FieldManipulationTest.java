@@ -16,10 +16,6 @@ import field.ShapeType;
 
 public class FieldManipulationTest {
 
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testEmptyCellsFunction() {
 	String inputString = "0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;2,2,2,2,2,2,2,2,2,2";
@@ -128,6 +124,32 @@ public class FieldManipulationTest {
     }
 
     @Test
+    public void testHeightOfBoard() {
+	FieldManipulator fm = new FieldManipulator();
+	String inputString = "" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,2,0,0,0,0,0,0,0;"
+		+ "0,0,2,2,0,0,0,0,0,0;" + "0,0,2,2,0,0,0,0,0,0;"
+		+ "0,0,2,2,2,0,2,0,2,0;" + "0,0,2,2,2,2,2,2,2,0;"
+		+ "0,2,2,2,2,2,2,2,2,2";
+	Field field = new Field(10, 20, inputString);
+
+	Shape shape = new Shape(ShapeType.I, field, new Point(3, -1));
+	shape.turnRight();
+	shape.oneLeft();
+	shape.oneLeft();
+	shape.oneLeft();
+
+	fm.insertShape(shape, field);
+	assertEquals(5, field.getHeightOfBoard());
+    }
+
+    @Test
     public void testEvaluateBoard() {
 	String inputString = "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
@@ -208,10 +230,10 @@ public class FieldManipulationTest {
 	shape.turnRight();
 	fm.insertShape(shape, field);
 
-	assertEquals("BLOCK", field.getCell(2, 16).getState().toString());
-	assertEquals("BLOCK", field.getCell(2, 17).getState().toString());
-	assertEquals("BLOCK", field.getCell(2, 18).getState().toString());
-	assertEquals("BLOCK", field.getCell(2, 19).getState().toString());
+	assertEquals("BLOCK", field.getCell(0, 16).getState().toString());
+	assertEquals("BLOCK", field.getCell(0, 17).getState().toString());
+	assertEquals("BLOCK", field.getCell(0, 18).getState().toString());
+	assertEquals("BLOCK", field.getCell(0, 19).getState().toString());
 
 	String inputString2 = "0,0,2,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
@@ -260,12 +282,7 @@ public class FieldManipulationTest {
 	shape.oneLeft();
 	shape.oneLeft();
 
-	fm.insertShape(shape, field);
-
-	assertEquals("BLOCK", field.getCell(0, 17).getState().toString());
-	assertEquals("BLOCK", field.getCell(0, 18).getState().toString());
-	assertEquals("BLOCK", field.getCell(0, 19).getState().toString());
-	assertEquals("BLOCK", field.getCell(1, 19).getState().toString());
+	assertEquals(false, shape.checkIfAllCellsInboundsAndEmpty());
 
 	inputString = "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
@@ -292,10 +309,7 @@ public class FieldManipulationTest {
 
 	fm.insertShape(shape, field);
 
-	assertEquals("BLOCK", field.getCell(8, 17).getState().toString());
-	assertEquals("BLOCK", field.getCell(8, 18).getState().toString());
-	assertEquals("BLOCK", field.getCell(8, 19).getState().toString());
-	assertEquals("BLOCK", field.getCell(9, 19).getState().toString());
+	assertEquals(false, shape.checkIfAllCellsInboundsAndEmpty());
 
     }
 
@@ -315,6 +329,16 @@ public class FieldManipulationTest {
 
 	Field field = new Field(10, 20, inputString);
 	Shape shape = new Shape(ShapeType.O, field, new Point(4, -1));
+	shape.turnRight();
+	shape.oneLeft();
+	fm.insertShape(shape, field);
+	assertEquals("BLOCK", field.getCell(3, 18).getState().toString());
+	assertEquals("BLOCK", field.getCell(3, 19).getState().toString());
+	assertEquals("BLOCK", field.getCell(4, 18).getState().toString());
+	assertEquals("BLOCK", field.getCell(4, 19).getState().toString());
+
+	field = new Field(10, 20, inputString);
+	shape = new Shape(ShapeType.O, field, new Point(4, -1));
 	shape.turnRight();
 	shape.oneLeft();
 	fm.insertShape(shape, field);

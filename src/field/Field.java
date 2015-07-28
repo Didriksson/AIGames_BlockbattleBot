@@ -159,10 +159,10 @@ public class Field {
 	int emptyCells = getNumberOfEmptyCells();
 	int isolatedCells = getNumberOfIsolatedCells();
 	int heigthOfBoard = getHeightOfBoard();
-	return emptyCells - (isolatedCells *2)- heigthOfBoard;
+	return emptyCells - isolatedCells * 4 - heigthOfBoard ;
     }
 
-    private int getHeightOfBoard() {
+    public int getHeightOfBoard() {
 	for (int i = 0; i < grid.length; i++) {
 	    for (Cell cell : getRow(i)) {
 		if (cell.getState() != CellType.EMPTY){
@@ -182,12 +182,18 @@ public class Field {
     }
 
     public String toString() {
-	String output = "";
+	String output = "      0      1      2      3      4      5      6      7      8      9  \n 0  ";
+	int count = 1;
 	for (Cell[] row : Arrays.asList(grid)) {
 	    for (Cell cell : row) {
 		output += cell.getState() + ", ";
 	    }
-	    output += "\n";
+	    if(count < 10)
+		output += "\n "+ count++ + "  ";
+	    else if(count < 20)
+		output += "\n "+ count++ + " ";
+
+		
 	}
 
 	return output;

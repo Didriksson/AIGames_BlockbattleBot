@@ -20,6 +20,7 @@ package bot;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import field.FieldManipulator;
 import moves.MoveType;
 
 /**
@@ -36,6 +37,7 @@ public class BotParser {
 	final Scanner scan;
 	
 	final BotStarter bot;
+	final FieldManipulator fm;
 	
 	BotState currentState;
 	
@@ -44,6 +46,7 @@ public class BotParser {
 		this.scan = new Scanner(System.in);
 		this.bot = bot;
 		this.currentState = new BotState();
+		this.fm = new FieldManipulator();
 	}
 	
 	public void run()
@@ -63,7 +66,6 @@ public class BotParser {
 				case "action":
 					StringBuffer output = new StringBuffer();
 					String moveJoin = "";
-					
 					ArrayList<MoveType> moves = bot.getMoves(currentState, Long.valueOf(parts[2]));
 					
 					if(moves.size() > 0)

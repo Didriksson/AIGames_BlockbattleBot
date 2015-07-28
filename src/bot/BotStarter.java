@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Optional;
 
 import moves.Move;
 import moves.MoveType;
@@ -52,23 +53,24 @@ public class BotStarter {
 	numberOfRotations.put(ShapeType.S, 1);
 	numberOfRotations.put(ShapeType.T, 3);
 	numberOfRotations.put(ShapeType.Z, 1);
+
     }
 
-    /**
-     * Returns a random amount of random moves
-     * 
-     * @param state
-     *            : current state of the bot
-     * @param timeout
-     *            : time to respond
-     * @return : a list of moves to execute
-     */
     public ArrayList<MoveType> getMoves(BotState state, long timeout) {
+	fm.checkIfActiveShapeOnField(state.getMyField());
 	ArrayList<Move> moves = new ArrayList<Move>();
 
-	moves.add(getBestForLeft(state));
-	moves.add(getResultForCurrentBoard(state));
-	moves.add(getBestMoveForRight(state));
+	getAllPossibleMoves(state, moves);
+
+	for (Move m : moves) {
+	    m.score = evaluateMove(state, m);
+	}
+
+	// System.out.println(s.getLocation() + "\n"+s.getFieldWithShape());
+
+	Shape s = new Shape(ShapeType.T, new Field(state.getMyField()),	new Point(state.getShapeLocation()));
+	s.performMoves(moves.get(0).moves);
+
 	moves.sort(new Comparator<Move>() {
 
 	    @Override
@@ -77,124 +79,49 @@ public class BotStarter {
 	    }
 	});
 
-	moves.get(0).moves.add(MoveType.DOWN);
-	System.err.println("Move: " + moves.get(0).moves + " for round: " + state.getRound());
+	System.err
+		.println("Target coordinate: " + moves.get(0).targetCoordinate
+			+ " Shapetype: " + state.getCurrentShape()
+			+ " Current round: " + state.getRound()
+			+ " with a score of : " + moves.get(0).score);
+
 	return moves.get(0).moves;
     }
 
-    // Return move for no move;
-    private Move getResultForCurrentBoard(BotState state) {
-	ArrayList<Move> completeMove = new ArrayList<Move>();
-	Move bestMove = new Move();
+    private void getAllPossibleMoves(BotState state, ArrayList<Move> moves) {
+	int rotated = numberOfRotations.get(state.getCurrentShape());
 
-	ArrayList<MoveType> rotations = getCorrectNumberOfRotations(state
-		.getCurrentShape());
+	do {
+	    {
+		Shape shape = new Shape(state.getCurrentShape(), new Field(
+			state.getMyField()),
+			new Point(state.getShapeLocation()));
+		for (int i = rotated; i < numberOfRotations.get(state
+			.getCurrentShape()); i++)
+		    shape.turnRight();
 
-	while (true) {
-	    Move move = new Move();
-	    move.moves = new ArrayList<MoveType>(rotations);
-	    completeMove.add(move);
-	    if (rotations.size() == 0)
-		break;
-	    else
-		rotations.remove(0);
+		ArrayList<Shape> points = getPossiblePositionsForPiece(shape, new Field(state.getMyField()));
+//		if (rotated == numberOfRotations.get(state.getCurrentShape())) {
+//		    for(Shape p : points)
+//			System.out.println(p.getLocation());
+//		}
+		for (Shape p : points) {
+		    Optional<Move> move = getPathToShapesPosition(p,
+			    state.getShapeLocation());
+		    if (move.isPresent()) {
+			move.get().targetCoordinate = new Point(p.getLocation());
+			moves.add(move.get());
+		    }
+		}
+		
+		points = null;
 
-	}
-
-	for (Move move : completeMove) {
-	    move.score = evaluateMove(state, move);
-	    if (bestMove.score < move.score)
-		bestMove = move;
-	}
-	return bestMove;
-    }
-
-    // Returns best move for the left move option
-    private Move getBestForLeft(BotState state) {
-	ArrayList<MoveType> moves = new ArrayList<MoveType>();
-	ArrayList<Move> completeMove = new ArrayList<Move>();
-	Move bestMove = new Move();
-	moves.add(MoveType.LEFT);
-	moves.add(MoveType.LEFT);
-	moves.add(MoveType.LEFT);
-	moves.add(MoveType.LEFT);
-	moves.add(MoveType.LEFT);
-
-	while (!moves.isEmpty()) {
-	    ArrayList<MoveType> rotations = getCorrectNumberOfRotations(state
-		    .getCurrentShape());
-
-	    while (true) {
-		Move move = new Move();
-		move.moves = new ArrayList<MoveType>(moves);
-		move.moves.addAll(rotations);
-		completeMove.add(move);
-		if (rotations.size() == 0)
-		    break;
-		else
-		    rotations.remove(0);
+		rotated--;
 	    }
-	    moves.remove(0);
-	}
-
-	for (Move move : completeMove) {
-
-	    move.score = evaluateMove(state, move);
-	    if (bestMove.score < move.score)
-		bestMove = move;
-	}
-	return bestMove;
+	} while (rotated >= 0);
     }
 
-    private ArrayList<MoveType> getCorrectNumberOfRotations(ShapeType shape) {
-
-	ArrayList<MoveType> rotations = new ArrayList<MoveType>();
-
-	for (int i = 0; i < numberOfRotations.get(shape); i++) {
-	    rotations.add(MoveType.TURNRIGHT);
-	}
-	return rotations;
-    }
-
-    // Returns best move for the right move option.
-    private Move getBestMoveForRight(BotState state) {
-	ArrayList<MoveType> moves = new ArrayList<MoveType>();
-
-	ArrayList<Move> completeMove = new ArrayList<Move>();
-	Move bestMove = new Move();
-	moves.add(MoveType.RIGHT);
-	moves.add(MoveType.RIGHT);
-	moves.add(MoveType.RIGHT);
-	moves.add(MoveType.RIGHT);
-	moves.add(MoveType.RIGHT);
-
-	while (!moves.isEmpty()) {
-	    ArrayList<MoveType> rotations = getCorrectNumberOfRotations(state
-		    .getCurrentShape());
-
-	    while (true) {
-		Move move = new Move();
-		move.moves = new ArrayList<MoveType>(moves);
-		move.moves.addAll(rotations);
-		completeMove.add(move);
-		if (rotations.size() == 0)
-		    break;
-		else
-		    rotations.remove(0);
-	    }
-	    moves.remove(0);
-	}
-
-	for (Move move : completeMove) {
-	    move.score = evaluateMove(state, move);
-	    if (bestMove.score < move.score)
-		bestMove = move;
-	}
-
-	return bestMove;
-    }
-
-    private int evaluateMove(BotState state, Move move) {
+    public int evaluateMove(BotState state, Move move) {
 	Field field = new Field(state.getMyField());
 	Shape shape = new Shape(state.getCurrentShape(), field, new Point(
 		state.getShapeLocation()));
@@ -207,5 +134,36 @@ public class BotStarter {
 
 	BotParser parser = new BotParser(new BotStarter());
 	parser.run();
+    }
+
+    // Tries the positions available FOR THE CURRENT ROTATION.
+    public ArrayList<Shape> getPossiblePositionsForPiece(Shape shape,
+	    Field field) {
+	ArrayList<Shape> shapes = new ArrayList<Shape>();
+	shape = new Shape(shape);
+
+	for (int row = field.getHeight() - 1; row > 0
+		&& row >= getRandHeight(field, shape); row--) {
+	    for (int col = 0; col < field.getWidth(); col++) {
+		shape.setLocation(col, row);
+		// System.out.println("col: " + col + " row: "+row +
+		// shape.checkIfAllCellsInboundsAndEmpty());
+		if (shape.checkIfAllCellsInboundsAndEmpty()
+			&& !shape.isFloating()) {
+		    shapes.add(new Shape(shape));
+		}
+	    }
+	}
+	return shapes;
+    }
+
+    private int getRandHeight(Field field, Shape shape) {
+	return field.getHeight()
+		- (field.getHeightOfBoard() + shape.getHeightOfRotationMatrix());
+    }
+
+    public Optional<Move> getPathToShapesPosition(Shape shape,
+	    Point startPosition) {
+	return shape.getPathToCurrentPosition(startPosition);
     }
 }

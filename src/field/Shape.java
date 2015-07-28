@@ -18,8 +18,13 @@
 package field;
 
 import java.awt.Point;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import moves.Move;
 import moves.MoveType;
 import field.Cell;
 import field.Field;
@@ -45,6 +50,9 @@ public class Shape {
     private int size;
     private Point location;
     private Field field;
+    private int matrixOffsetX;
+    private int matrixOffsetY;
+    public int rotation = 0;
 
     public Shape(ShapeType type, Field field, Point location) {
 	this.type = type;
@@ -54,6 +62,20 @@ public class Shape {
 
 	setShape();
 	setBlockLocations();
+    }
+
+    public Shape(Shape shape) {
+	this.type = shape.type;
+	this.field = new Field(shape.field);
+	this.blocks = new Cell[4];
+	this.location = new Point(shape.getLocation());
+
+	setShape();
+	setBlockLocations();
+
+	for (int i = 0; i < shape.rotation; i++) {
+	    turnRight();
+	}
     }
 
     public void performMoves(List<MoveType> moves) {
@@ -79,12 +101,21 @@ public class Shape {
 	}
     }
 
-    // ACTIONS (no checks for errors are performed in the actions!)
+    public String getFieldWithShape() {
+	Field copyOfField = new Field(field);
+	for (Cell cell : blocks) {
+	    copyOfField.setCell(cell);
+	}
+	return copyOfField.toString();
+    }
 
     /**
      * Rotates the shape counter-clockwise
      */
     public void turnLeft() {
+	rotation--;
+	if (rotation < 0)
+	    rotation = 4 - rotation;
 
 	Cell[][] temp = this.transposeShape();
 	for (int y = 0; y < size; y++) {
@@ -99,20 +130,22 @@ public class Shape {
     /**
      * Rotates the shape clockwise
      */
-    public void turnRight() {
-
+    public boolean turnRight() {
+	rotation = (rotation + 1) % 4;
 	Cell[][] temp = this.transposeShape();
 	for (int x = 0; x < size; x++) {
 	    this.shape[x] = temp[size - x - 1];
 	}
-
 	this.setBlockLocations();
+	return checkIfAllCellsInboundsAndEmpty();
+
     }
 
     public void oneDown() {
 
 	this.location.y++;
 	this.setBlockLocations();
+
     }
 
     public void oneUp() {
@@ -121,25 +154,13 @@ public class Shape {
     }
 
     public void oneRight() {
-
 	this.location.x++;
 	this.setBlockLocations();
-
-	if (!checkIfAllCellsInboundsAndEmpty()) {
-	    this.location.x--;
-	    this.setBlockLocations();
-	}
     }
 
     public void oneLeft() {
 	this.location.x--;
 	this.setBlockLocations();
-
-	if (!checkIfAllCellsInboundsAndEmpty()) {
-	    this.location.x++;
-	    this.setBlockLocations();
-	}
-
     }
 
     public boolean checkIfAllCellsInboundsAndEmpty() {
@@ -151,6 +172,22 @@ public class Shape {
 	    }
 	}
 	return inboundsAndEmpty;
+    }
+
+    public boolean isFloating() {
+	oneDown();
+	boolean floating = checkIfAllCellsInboundsAndEmpty();
+	oneUp();
+	return floating;
+
+    }
+
+    // Returns the height of the matrix. This is used because we do not want to
+    // test cases
+    // where the board cant hold a piece. For example in the case where we need
+    // the available positions for a piece.
+    public int getHeightOfRotationMatrix() {
+	return size;
     }
 
     /**
@@ -169,6 +206,46 @@ public class Shape {
     }
 
     /**
+     * This function will correct the empty rows that exists due to rotation
+     * etc. We want a line piece to always have a location to the top left of
+     * the shape e.g.
+     */
+//    private void setMatrixOffset() {
+//	setMatrixOffSetX();
+//	setMatrixOffSetY();
+//    }
+//
+//    private void setMatrixOffSetY() {
+//	matrixOffsetY = 0;
+//	boolean emptyRow = true;
+//	for (int row = 0; row < size && emptyRow; row++) {
+//	    for (int col = 0; col < size; col++) {
+//		if (shape[col][row].isShape()) {
+//		    emptyRow = false;
+//		}
+//	    }
+//	    if (emptyRow)
+//		matrixOffsetY--;
+//
+//	}
+//    }
+
+//    private void setMatrixOffSetX() {
+//	matrixOffsetX = 0;
+//	boolean emptyRow = true;
+//	for (int col = 0; col < size && emptyRow; col++) {
+//	    for (Cell row : shape[col]) {
+//		if (row.isShape()) {
+//		    emptyRow = false;
+//		    break;
+//		}
+//	    }
+//	    if (emptyRow)
+//		matrixOffsetX--;
+//	}
+//    }
+
+    /**
      * Uses the shape's current orientation and position to set the actual
      * location of the block-type cells on the field
      */
@@ -176,7 +253,8 @@ public class Shape {
 	for (int y = 0; y < size; y++) {
 	    for (int x = 0; x < size; x++) {
 		if (shape[x][y].isShape()) {
-		    shape[x][y].setLocation(location.x + x, location.y + y);
+		    shape[x][y].setLocation((location.x + x) + matrixOffsetX,
+			    (location.y + y) + matrixOffsetY);
 		}
 	    }
 	}
@@ -269,6 +347,7 @@ public class Shape {
 
     public void setLocation(int x, int y) {
 	this.location = new Point(x, y);
+	setBlockLocations();
     }
 
     public Cell[] getBlocks() {
@@ -283,4 +362,45 @@ public class Shape {
 	return this.type;
     }
 
+    public Optional<Move> getPathToCurrentPosition(Point startPosition) {
+	Move move = new Move();
+	Point originalPosition = new Point(getLocation());
+	boolean inbounds = true;
+	while (inbounds) {
+	    if (getLocation().y < 0) {
+		inbounds = false;
+		break;
+	    }
+	    for (Cell cell : getBlocks()) {
+		if (cell.hasCollision(field)) {
+		    return Optional.empty();
+		}
+	    }
+
+	    move.moves.add(MoveType.DOWN);
+	    oneUp();
+	}
+	
+	while (getLocation().x != startPosition.x) {
+	    if (getLocation().x - startPosition.x > 0) {
+		oneLeft();
+		move.moves.add(MoveType.RIGHT);
+	    } else {
+		oneRight();
+		move.moves.add(MoveType.LEFT);
+	    }
+	}
+
+	for (int i = 0; i < rotation; i++)
+	    move.moves.add(MoveType.TURNRIGHT);
+
+	Collections.reverse(move.moves);
+
+	setLocation(originalPosition.x, originalPosition.y);
+	return Optional.of(move);
+    }
+
+    public Field getField() {
+	return field;
+    }
 }
