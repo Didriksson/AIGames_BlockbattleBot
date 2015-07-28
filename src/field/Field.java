@@ -123,14 +123,6 @@ public class Field {
 	return this.width;
     }
 
-    public int getNumberOfEmptyCells() {
-	int emptyCellsCount = 0;
-	for (Cell[] row : grid)
-	    emptyCellsCount += Arrays.asList(row).stream()
-		    .filter(c -> c.isEmpty()).count();
-	return emptyCellsCount;
-    }
-
     public boolean isRowFull(int y) {
 	if (y < 0 || y >= this.height)
 	    return false;
@@ -159,13 +151,56 @@ public class Field {
 	int emptyCells = getNumberOfEmptyCells();
 	int isolatedCells = getNumberOfIsolatedCells();
 	int heigthOfBoard = getHeightOfBoard();
-	return emptyCells - isolatedCells * 4 - heigthOfBoard ;
+	int compactParameterHorizontal= horizontalCompactChecker();
+	int compactParameterVertical = verticalCompactChecker();
+	return emptyCells - compactParameterHorizontal - compactParameterVertical - isolatedCells - heigthOfBoard;
+    }
+
+    public int horizontalCompactChecker() {
+	int blockChanges = 0;
+	for (int row = 0; row < height; row++) {
+	    boolean trackingBlock = false;
+	    for (int col = 0; col < width; col++) {
+		if (grid[row][col].isBlock()) {
+		    if (!trackingBlock)
+			blockChanges++;
+		    trackingBlock = true; 
+		} else {
+		    trackingBlock = false;
+		}
+	    }
+	    if (!trackingBlock)
+		blockChanges++;
+	}
+
+	return blockChanges;
+    }
+
+    public int verticalCompactChecker() {
+	int blockChanges = 0;
+	for (int col = 0; col < width; col++) {
+	    boolean trackingBlock = false;
+	    for (int row = 1; row < height - 1; row++) {
+		if (grid[row][col].isBlock()) {
+		    if (!trackingBlock)
+			blockChanges++;
+		    trackingBlock = true;
+		} else {
+		    trackingBlock = false;
+		}
+	    }
+	    
+	    if (!trackingBlock)
+		blockChanges++;
+	}
+
+	return blockChanges;
     }
 
     public int getHeightOfBoard() {
 	for (int i = 0; i < grid.length; i++) {
 	    for (Cell cell : getRow(i)) {
-		if (cell.getState() != CellType.EMPTY){
+		if (cell.getState() != CellType.EMPTY) {
 		    return height - i;
 		}
 	    }
@@ -181,6 +216,14 @@ public class Field {
 	return sum;
     }
 
+    public int getNumberOfEmptyCells() {
+	int emptyCellsCount = 0;
+	for (Cell[] row : grid)
+	    emptyCellsCount += Arrays.asList(row).stream()
+		    .filter(c -> c.isEmpty()).count();
+	return emptyCellsCount;
+    }
+
     public String toString() {
 	String output = "      0      1      2      3      4      5      6      7      8      9  \n 0  ";
 	int count = 1;
@@ -188,14 +231,14 @@ public class Field {
 	    for (Cell cell : row) {
 		output += cell.getState() + ", ";
 	    }
-	    if(count < 10)
-		output += "\n "+ count++ + "  ";
-	    else if(count < 20)
-		output += "\n "+ count++ + " ";
+	    if (count < 10)
+		output += "\n " + count++ + "  ";
+	    else if (count < 20)
+		output += "\n " + count++ + " ";
 
-		
 	}
 
 	return output;
     }
+
 }
