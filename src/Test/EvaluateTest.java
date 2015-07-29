@@ -1,14 +1,74 @@
 package Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.awt.Point;
+import java.util.ArrayList;
+
+import moves.MoveType;
 
 import org.junit.Test;
 
-import Util.FieldStrings;
+import bot.BotStarter;
+import bot.BotState;
 import field.Field;
+import field.FieldManipulator;
+import field.Shape;
+import field.ShapeType;
 
 public class EvaluateTest {
 
+    
+    @Test
+    public void Match55b88c8b35ec1d4039cf14a8(){
+	Field bad = new Field(10, 20, 
+		  "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,2,0,0;"
+		+ "0,0,0,0,0,0,0,2,2,2");
+	
+	Field good = new Field(10, 20, 
+		  "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0;"
+		+ "2,2,2,0,0,0,0,0,0,0");
+	assertTrue(good.evaluate() > bad.evaluate());
+	
+    }
+    
     @Test
     public void horizontalCompactCheckerTest() {
 	Field field = new Field(10, 20, 
@@ -158,11 +218,12 @@ public class EvaluateTest {
 		+ "2,2,2,0,0,0,0,0,0,0;"
 		+ "2,2,2,0,0,0,0,0,0,0");
 	
-	System.out.println(good.evaluate());
-	System.out.println(bad.evaluate());
+
 	assertEquals(true, good.evaluate() > bad.evaluate());
 	
     }
+    
+  
 
 
 }

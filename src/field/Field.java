@@ -153,13 +153,24 @@ public class Field {
 	int heigthOfBoard = getHeightOfBoard();
 	int compactParameterHorizontal= horizontalCompactChecker();
 	int compactParameterVertical = verticalCompactChecker();
+	
+//	System.out.println("Emptycells: " + emptyCells
+//		+ "\nIsolated: " + isolatedCells
+//		+ "\nHeight: " + heigthOfBoard
+//		+ "\nCompact horizontal: " + compactParameterHorizontal
+//		+ "\nCompact vertical: " + compactParameterVertical
+//		);
+	
+	
+	
 	return emptyCells - compactParameterHorizontal - compactParameterVertical - isolatedCells - heigthOfBoard;
     }
 
+    // This iterates through the board more than necessary however for readability I am keeping the empty rows function - could be baked into this one.
     public int horizontalCompactChecker() {
 	int blockChanges = 0;
 	for (int row = 0; row < height; row++) {
-	    boolean trackingBlock = false;
+	    boolean trackingBlock = true;
 	    for (int col = 0; col < width; col++) {
 		if (grid[row][col].isBlock()) {
 		    if (!trackingBlock)
@@ -172,10 +183,27 @@ public class Field {
 	    if (!trackingBlock)
 		blockChanges++;
 	}
-
-	return blockChanges;
+	return blockChanges - getEmptyRows();
     }
 
+    public int getEmptyRows() {
+	int emptyRows = 0;
+	boolean foundBlock = false;
+	for (int row = 0; row < height; row++) {
+	    for (int col = 0; col < width; col++) {
+		if(grid[row][col].isBlock()){
+		    foundBlock = true;
+		    break;
+		}
+	    }
+	    if(!foundBlock)
+		emptyRows++;
+	    foundBlock = false;
+	}
+	return emptyRows;
+    }
+
+    // This iterates through the board more than necessary however for readability I am keeping the empty cols function - could be baked into this one.
     public int verticalCompactChecker() {
 	int blockChanges = 0;
 	for (int col = 0; col < width; col++) {
@@ -194,7 +222,24 @@ public class Field {
 		blockChanges++;
 	}
 
-	return blockChanges;
+	return blockChanges - getEmptyCols();
+    }
+    
+    public int getEmptyCols() {
+	int emptyCols = 0;
+	boolean foundBlock = false;
+	for (int col = 0; col < width; col++) {
+	    for (int row = 0; row< height; row++) {
+		if(grid[row][col].isBlock()){
+		    foundBlock = true;
+		    break;
+		}
+	    }
+	    if(!foundBlock)
+		emptyCols++;
+	    foundBlock = false;
+	}
+	return emptyCols;
     }
 
     public int getHeightOfBoard() {

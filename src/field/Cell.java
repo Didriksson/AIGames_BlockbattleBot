@@ -46,8 +46,10 @@ public class Cell {
 	}
 	
 	public boolean isOutOfBoundaries(Field f) {
-		if(this.location.x >= f.getWidth() || this.location.x < 0 || this.location.y >= f.getHeight())
+		if(state != CellType.EMPTY){
+		    if(this.location.x >= f.getWidth() || this.location.x < 0 || this.location.y >= f.getHeight())
 			return true;
+		}
 		return false;
 	}
 

@@ -144,10 +144,8 @@ public class BotStarter {
 
 	for (int row = field.getHeight() - 1; row > 0
 		&& row >= getRandHeight(field, shape); row--) {
-	    for (int col = 0; col < field.getWidth(); col++) {
+	    for (int col = -2; col <= field.getWidth(); col++) {
 		shape.setLocation(col, row);
-		// System.out.println("col: " + col + " row: "+row +
-		// shape.checkIfAllCellsInboundsAndEmpty());
 		if (shape.checkIfAllCellsInboundsAndEmpty()
 			&& !shape.isFloating()) {
 		    shapes.add(new Shape(shape));

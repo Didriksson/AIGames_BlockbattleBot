@@ -22,7 +22,44 @@ import field.ShapeType;
 public class BotStarterTest {
 
     @Test
-    public void TestMatch55b740a11c687b361d5ba85e() {
+    public void testMatch55b8855c1c687b361d5bb498(){
+	
+	BotStarter botStarter = new BotStarter();
+	
+	Field bad = new Field(10, 20, 
+		  "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,2,2,2,2,0,0,0;"
+		+ "0,0,2,2,2,2,2,2,2,0;"
+		+ "0,2,2,2,2,2,2,2,2,2;"
+		+ "0,2,2,2,2,2,2,0,2,2;"
+		+ "0,2,2,2,2,2,2,2,2,2;"
+		+ "0,2,2,2,2,2,2,2,2,2;"
+		+ "0,2,2,2,2,2,2,2,2,2;"
+		+ "0,2,2,2,2,2,2,0,2,2;"
+		+ "0,2,2,2,2,2,2,2,2,2;"
+		+ "3,3,3,3,3,3,3,3,3,3");
+	
+	
+	Shape shape = new Shape(ShapeType.I, new Field(bad), new Point(3,-1));
+	shape.turnRight();
+	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(shape, new Field(bad));
+	
+	shape.setLocation(7, 8);
+	
+    }
+    
+    
+    @Test
+    public void testMatch55b740a11c687b361d5ba85e() {
 	BotStarter botStarter = new BotStarter();
 	BotState state = new BotState();
 	FieldManipulator fm = new FieldManipulator();
@@ -201,7 +238,8 @@ public class BotStarterTest {
     @Test
     public void getLocationsForPiece() {
 	BotStarter botStarter = new BotStarter();
-
+	Shape shape;
+	ArrayList<Shape> points;
 	Field field = new Field(10, 20, "" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
@@ -214,29 +252,38 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0");
 
-	Shape shape = new Shape(ShapeType.O, field, new Point(3, -1));
-
-	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(
-		shape, field);
-	assertEquals(9, points.size());
-
-	shape = new Shape(ShapeType.Z, field, new Point(3, -1));
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
-	assertEquals(8, points.size());
-
-	shape.turnLeft();
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
-	assertEquals(9, points.size());
-
+//	shape = new Shape(ShapeType.O, field, new Point(3, -1));
+//
+//	points = botStarter.getPossiblePositionsForPiece(
+//		shape, field);
+//	assertEquals(9, points.size());
+//
+//	shape = new Shape(ShapeType.Z, field, new Point(3, -1));
+//	points = botStarter.getPossiblePositionsForPiece(shape, field);
+//	assertEquals(8, points.size());
+//
+//	shape.turnLeft();
+//	points = botStarter.getPossiblePositionsForPiece(shape, field);
+//	assertEquals(9, points.size());
+//
+//	shape = new Shape(ShapeType.I, field, new Point(3, -1));
+//	points = botStarter.getPossiblePositionsForPiece(shape, field);
+//	assertEquals(7, points.size());
+//
+	
 	shape = new Shape(ShapeType.I, field, new Point(3, -1));
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
-	assertEquals(7, points.size());
-
-	shape = new Shape(ShapeType.I, field, new Point(3, -1));
 	shape.turnLeft();
+	
+//	shape.setLocation(8, 16);
+//	System.out.println("8, 16: " + shape.checkIfAllCellsInboundsAndEmpty());
+	
 	points = botStarter.getPossiblePositionsForPiece(shape, field);
+//	for(Shape s : points)
+//	    System.out.println(s.getLocation());
+	
+	
 	assertEquals(10, points.size());
-
+	
 	field = new Field(10, 20, "" + "2,2,2,2,2,2,2,2,2,2;"
 		+ "2,2,2,2,2,2,2,2,2,2;" + "2,2,2,2,2,2,2,2,2,2;"
 		+ "2,2,2,2,2,2,2,2,2,2;" + "2,2,2,2,2,2,2,2,2,2;"
