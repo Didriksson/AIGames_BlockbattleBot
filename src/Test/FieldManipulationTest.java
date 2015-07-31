@@ -163,7 +163,7 @@ public class FieldManipulationTest {
 		+ "0,0,2,2,0,0,0,0,0,0;" + "0,2,2,2,2,2,0,0,0,0";
 	Field field = new Field(10, 20, inputString);
 
-	int evaluateionScore1 = field.evaluate();
+	double evaluateionScore1 = field.evaluate();
 
 	String inputString2 = "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
@@ -176,7 +176,7 @@ public class FieldManipulationTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,2,2,0;" + "0,0,0,2,2,2,2,2,0,0";
 	Field field2 = new Field(10, 20, inputString2);
-	int evaluateionScore2 = field2.evaluate();
+	double evaluateionScore2 = field2.evaluate();
 
 	assertTrue(evaluateionScore1 > evaluateionScore2);
 

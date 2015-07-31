@@ -19,7 +19,9 @@ package field;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Field class
@@ -39,14 +41,16 @@ public class Field {
     public Field(int width, int height, String fieldString) {
 	this.width = width;
 	this.height = height;
-
 	parse(fieldString);
     }
+
+
 
     public Field(Field field) {
 	this.width = field.width;
 	this.height = field.height;
 	this.grid = field.getGrid();
+
 
     }
 
@@ -108,8 +112,6 @@ public class Field {
 	for (int i = 0; i < getWidth(); i++) {
 	    if (getCell(i, y).isEmpty() && !getCell(i, y - 1).isEmpty()) {
 		isolatedCells++;
-		// System.err.println("Found isolated cell: Row: " + y +
-		// " Col: " + i);
 	    }
 	}
 	return isolatedCells;
@@ -148,25 +150,39 @@ public class Field {
     }
 
     public int evaluate() {
-	int emptyCells = getNumberOfEmptyCells();
-	int isolatedCells = getNumberOfIsolatedCells();
-	int heigthOfBoard = getHeightOfBoard();
-	int compactParameterHorizontal= horizontalCompactChecker();
-	int compactParameterVertical = verticalCompactChecker();
 	
-//	System.out.println("Emptycells: " + emptyCells
-//		+ "\nIsolated: " + isolatedCells
-//		+ "\nHeight: " + heigthOfBoard
-//		+ "\nCompact horizontal: " + compactParameterHorizontal
-//		+ "\nCompact vertical: " + compactParameterVertical
-//		);
+	int emptyCells = getNumberOfEmptyCells() * 10;
+	int isolatedCells = getNumberOfIsolatedCells() * 10;
+	int semiIsolatedCells = getSemiIsolatedCells() * 7;
+	int heigthOfBoard = getHeightOfBoard() * 5;
+	int compactParameterHorizontal = horizontalCompactChecker() * 5;
+	int compactParameterVertical = verticalCompactChecker() * 5;
+	int totalScoreDeduction = compactParameterHorizontal + compactParameterVertical + isolatedCells + semiIsolatedCells + heigthOfBoard;
+	int finalScore = emptyCells - totalScoreDeduction;
 	
-	
-	
-	return emptyCells - compactParameterHorizontal - compactParameterVertical - isolatedCells - heigthOfBoard;
+	System.err.println("Emptycells: " + emptyCells + "\nIsolated: "
+		+ isolatedCells + "\nHeight: " + heigthOfBoard
+		+ semiIsolatedCells+ "\nSemi iso: " + semiIsolatedCells
+		+ "\nCompact horizontal: " + compactParameterHorizontal
+		+ "\nCompact vertical: " + compactParameterVertical
+		+ "\nFINAL: " + finalScore);
+
+	System.err.println();
+
+	return finalScore;
+    }
+    
+    public int getSemiIsolatedCells(){
+	int sum = 0;
+	for (int i = 0; i < getHeight(); i++) {
+	    sum += getNumberOfIsolatedCellsForRow(i);
+	}
+	return sum;
     }
 
-    // This iterates through the board more than necessary however for readability I am keeping the empty rows function - could be baked into this one.
+    // This iterates through the board more than necessary however for
+    // readability I am keeping the empty rows function - could be baked into
+    // this one.
     public int horizontalCompactChecker() {
 	int blockChanges = 0;
 	for (int row = 0; row < height; row++) {
@@ -175,7 +191,7 @@ public class Field {
 		if (grid[row][col].isBlock()) {
 		    if (!trackingBlock)
 			blockChanges++;
-		    trackingBlock = true; 
+		    trackingBlock = true;
 		} else {
 		    trackingBlock = false;
 		}
@@ -191,19 +207,21 @@ public class Field {
 	boolean foundBlock = false;
 	for (int row = 0; row < height; row++) {
 	    for (int col = 0; col < width; col++) {
-		if(grid[row][col].isBlock()){
+		if (grid[row][col].isBlock()) {
 		    foundBlock = true;
 		    break;
 		}
 	    }
-	    if(!foundBlock)
+	    if (!foundBlock)
 		emptyRows++;
 	    foundBlock = false;
 	}
 	return emptyRows;
     }
 
-    // This iterates through the board more than necessary however for readability I am keeping the empty cols function - could be baked into this one.
+    // This iterates through the board more than necessary however for
+    // readability I am keeping the empty cols function - could be baked into
+    // this one.
     public int verticalCompactChecker() {
 	int blockChanges = 0;
 	for (int col = 0; col < width; col++) {
@@ -217,25 +235,25 @@ public class Field {
 		    trackingBlock = false;
 		}
 	    }
-	    
+
 	    if (!trackingBlock)
 		blockChanges++;
 	}
 
 	return blockChanges - getEmptyCols();
     }
-    
+
     public int getEmptyCols() {
 	int emptyCols = 0;
 	boolean foundBlock = false;
 	for (int col = 0; col < width; col++) {
-	    for (int row = 0; row< height; row++) {
-		if(grid[row][col].isBlock()){
+	    for (int row = 0; row < height; row++) {
+		if (grid[row][col].isBlock()) {
 		    foundBlock = true;
 		    break;
 		}
 	    }
-	    if(!foundBlock)
+	    if (!foundBlock)
 		emptyCols++;
 	    foundBlock = false;
 	}
@@ -254,11 +272,40 @@ public class Field {
     }
 
     public int getNumberOfIsolatedCells() {
-	int sum = 0;
-	for (int i = 0; i < getHeight(); i++) {
-	    sum += getNumberOfIsolatedCellsForRow(i);
+	int isolatedCells = 0;
+	Cell left;
+	Cell middle;
+	Cell right;
+	Cell top;
+	for (int row = 1; row < height; row++) {
+	    
+	    //Not the most elegant solution but the edges of the field is special - these dont need a block on the left hand side to be an isolated cell.
+	    	middle = grid[row][0];
+		right = grid[row][1];
+		top = grid[row-1][0];
+		
+		if(middle.isEmpty() && !right.isEmpty() && !top.isEmpty())
+		    isolatedCells++;
+		
+	    for (int col = 1; col < width - 1; col++) {
+		middle = grid[row][col];
+		left = grid[row][col-1];
+		right = grid[row][col+1];
+		top = grid[row-1][col];
+		
+		if(middle.isEmpty() && !left.isEmpty() && !right.isEmpty() && !top.isEmpty())
+		    isolatedCells++;
+	    }
+	    
+	    	middle = grid[row][width-1];
+		left = grid[row][width-2];
+		top = grid[row-1][width-1];
+		
+		if(middle.isEmpty() && !left.isEmpty() && !top.isEmpty())
+		    isolatedCells++;
 	}
-	return sum;
+	return isolatedCells;
+
     }
 
     public int getNumberOfEmptyCells() {
@@ -285,5 +332,5 @@ public class Field {
 
 	return output;
     }
-
+    
 }

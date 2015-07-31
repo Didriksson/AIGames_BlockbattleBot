@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import moves.Move;
 import moves.MoveType;
+import field.Cell;
 import field.Field;
 import field.FieldManipulator;
 import field.Shape;
@@ -90,7 +91,6 @@ public class BotStarter {
 
     private void getAllPossibleMoves(BotState state, ArrayList<Move> moves) {
 	int rotated = numberOfRotations.get(state.getCurrentShape());
-
 	do {
 	    {
 		Shape shape = new Shape(state.getCurrentShape(), new Field(
@@ -101,10 +101,7 @@ public class BotStarter {
 		    shape.turnRight();
 
 		ArrayList<Shape> points = getPossiblePositionsForPiece(shape, new Field(state.getMyField()));
-//		if (rotated == numberOfRotations.get(state.getCurrentShape())) {
-//		    for(Shape p : points)
-//			System.out.println(p.getLocation());
-//		}
+		    
 		for (Shape p : points) {
 		    Optional<Move> move = getPathToShapesPosition(p,
 			    state.getShapeLocation());
@@ -119,6 +116,18 @@ public class BotStarter {
 		rotated--;
 	    }
 	} while (rotated >= 0);
+    }
+
+    private void removeAllPointsAffectingTetrisColumn(ArrayList<Shape> points) {
+	ArrayList<Shape> pointsToRemove = new ArrayList<Shape>();
+	for(Shape s : points)
+	{
+	    for(Cell cell : s.getBlocks()){
+	    if(cell.isShape() && cell.getLocation().x == 9)
+		pointsToRemove.add(s);
+	    }
+	}
+	points.removeAll(pointsToRemove);
     }
 
     public int evaluateMove(BotState state, Move move) {
@@ -141,10 +150,12 @@ public class BotStarter {
 	    Field field) {
 	ArrayList<Shape> shapes = new ArrayList<Shape>();
 	shape = new Shape(shape);
-
+	//Initial is -2 since some shapes will have an empty column if rotated.
+	int colStart = -2;
+	
 	for (int row = field.getHeight() - 1; row > 0
 		&& row >= getRandHeight(field, shape); row--) {
-	    for (int col = -2; col <= field.getWidth(); col++) {
+	    for (int col = colStart; col <= field.getWidth(); col++) {
 		shape.setLocation(col, row);
 		if (shape.checkIfAllCellsInboundsAndEmpty()
 			&& !shape.isFloating()) {
