@@ -151,14 +151,22 @@ public class Field {
 
     public int evaluate() {
 	
-	int emptyCells = getNumberOfEmptyCells() * 10;
-	int isolatedCells = getNumberOfIsolatedCells() * 15;
-	int semiIsolatedCells = getSemiIsolatedCells() * 7;
-	int heigthOfBoard = getHeightOfBoard() * 7;
-	int compactParameterHorizontal = horizontalCompactChecker() * 5;
-	int compactParameterVertical = verticalCompactChecker() * 5;
-	int totalScoreDeduction = compactParameterHorizontal + compactParameterVertical + isolatedCells + semiIsolatedCells + heigthOfBoard;
-	int finalScore = emptyCells - totalScoreDeduction;
+//	int emptyCells = getNumberOfEmptyCells() * 10;
+//	int isolatedCells = getNumberOfIsolatedCells() * 15;
+//	int semiIsolatedCells = getSemiIsolatedCells() * 7;
+//	int heigthOfBoard = getHeightOfBoard() * 8;
+//	int compactParameterHorizontal = horizontalCompactChecker() * 5;
+//	int compactParameterVertical = verticalCompactChecker() * 5;
+//	int totalScoreDeduction = compactParameterHorizontal + compactParameterVertical + isolatedCells + semiIsolatedCells + heigthOfBoard;
+//	int finalScore = emptyCells - totalScoreDeduction;
+
+	
+	//Trying the V67 version again.
+	int emptyCells = getNumberOfEmptyCells();
+	int isolatedCells = getNumberOfIsolatedCells();
+	int heigthOfBoard = getHeightOfBoard();
+	int compactParameterHorizontal= horizontalCompactChecker();
+	int compactParameterVertical = verticalCompactChecker();	
 	
 //	System.err.println("Emptycells: " + emptyCells + "\nIsolated: "
 //		+ isolatedCells + "\nHeight: " + heigthOfBoard
@@ -169,7 +177,9 @@ public class Field {
 //
 //	System.err.println();
 
-	return finalScore;
+//	return finalScore;
+	return emptyCells - compactParameterHorizontal - compactParameterVertical - isolatedCells - heigthOfBoard;
+
     }
     
     public int getSemiIsolatedCells(){
