@@ -101,7 +101,6 @@ public class BotStarter {
 
 		ArrayList<Shape> points = getPossiblePositionsForPiece(shape, new Field(state.getMyField()));
 		for (Shape p : points) {
-		    System.out.println(p.getLocation() +" "+ rotated);
 		    Optional<Move> move = getPathToShapesPosition(p,
 			    state.getShapeLocation());
 		    if (move.isPresent()) {
