@@ -46,62 +46,164 @@ public class BotStarterTest {
 	shape.setLocation(7, 8);
 
     }
-//
-//    @Test
-//    public void TestMoveWithLinePiece() {
-//
-//	BotStarter botStarter = new BotStarter();
-//	BotState state = new BotState();
-//	state.updateSettings("timebank", "10000");
-//	state.updateSettings("time_per_move", "500");
-//	state.updateSettings("player_names", "player1,player2");
-//	state.updateSettings("your_bot", "player1");
-//	state.updateSettings("field_height", "20");
-//	state.updateSettings("field_width", "10");
-//
-//	state.updateState("player1", "round", "1");
-//	state.updateState("player1", "this_piece_type", "I");
-//	state.updateState("player1", "next_piece_type", "I");
-//	state.updateState("player1", "this_piece_position", "3,-1");
-//	state.updateState("player1", "row_points", "0");
-//	state.updateState("player1", "combo", "0");
-//	state.updateState("player1", "field", "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-//		+ "0,0,0,0,0,0,0,0,0,0;" + "0,2,0,0,0,0,0,0,0,0;"
-//		+ "2,2,2,0,0,0,0,0,0,0");
-//
-////	Field fieldForLine = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-////		+ "0,0,0,0,0,0,0,0,0,0;" + "0,2,0,0,0,0,0,0,0,0;"
-////		+ "2,2,2,0,0,0,0,0,0,0");
-////	Shape shape = new Shape(ShapeType.I, new Field(fieldForLine),
-////		new Point(3, -1));
-////	shape.turnRight();
-////	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(shape, new Field(fieldForLine));
-////	
-////	for(Shape s : points)
-////	    System.out.println(s.getLocation());
-//	
-//	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
-//	System.out.println(moves);
-////	shape.performMoves(moves);
-////	System.out.println(shape.getFieldWithShape());
-//
-//    }
+
+    @Test
+    public void findPathIntoSemiIsolatedCells() {
+	BotStarter botStarter = new BotStarter();
+
+	BotState state = new BotState();
+	state.updateSettings("timebank", "10000");
+	state.updateSettings("time_per_move", "500");
+	state.updateSettings("player_names", "player1,player2");
+	state.updateSettings("your_bot", "player1");
+	state.updateSettings("field_height", "20");
+	state.updateSettings("field_width", "10");
+
+	state.updateState("player1", "round", "1");
+	state.updateState("player1", "this_piece_type", "T");
+	state.updateState("player1", "next_piece_type", "I");
+	state.updateState("player1", "this_piece_position", "3,-1");
+	state.updateState("player1", "row_points", "0");
+	state.updateState("player1", "combo", "0");
+	state.updateState("player1", "field", "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0;" + "2,2,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0");
+
+	Field field = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0;" + "2,2,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0");
+
+	Shape shape = new Shape(ShapeType.T, new Field(field), new Point(3, -1));
+	shape.setLocation(1, 18);
+	System.out.println(shape.getFieldWithShape());
+	System.out.println(shape.getPathToCurrentPosition(new Point(3, -1)));
+	// ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
+	// assertEquals(MoveType.LEFT, moves.get(0));
+	// assertEquals(MoveType.LEFT, moves.get(19));
+    }
+
+    @Test
+    public void match55bb970035ec1d4039cf3ab8() {
+	BotStarter botStarter = new BotStarter();
+
+	BotState state = new BotState();
+	state.updateSettings("timebank", "10000");
+	state.updateSettings("time_per_move", "500");
+	state.updateSettings("player_names", "player1,player2");
+	state.updateSettings("your_bot", "player1");
+	state.updateSettings("field_height", "20");
+	state.updateSettings("field_width", "10");
+
+	state.updateState("player1", "round", "1");
+	state.updateState("player1", "this_piece_type", "O");
+	state.updateState("player1", "next_piece_type", "I");
+	state.updateState("player1", "this_piece_position", "3,-1");
+	state.updateState("player1", "row_points", "0");
+	state.updateState("player1", "combo", "0");
+	state.updateState("player1", "field", "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "2,0,0,0,0,0,0,0,0,0;"
+		+ "2,2,0,0,0,0,0,0,2,0;" + "2,2,0,0,0,0,0,0,2,2;"
+		+ "2,2,2,0,0,0,0,2,2,2;");
+
+	Field field = new Field(10, 20, 
+		  "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "2,0,0,0,0,0,0,0,0,0;"
+		+ "2,2,0,0,0,0,0,0,2,0;" 
+		+ "2,2,0,0,0,0,0,0,2,2;"
+		+ "2,2,2,0,0,0,0,2,2,2;");
+
+	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
+	System.out.println(moves);
+
+	Shape shape = new Shape(ShapeType.O, new Field(field), new Point(3, -1));
+
+	 shape.performMoves(moves);
+	 System.out.println(shape.getFieldWithShape());
+    }
+
+    @Test
+    public void Match55bba90e35ec1d4039cf3bb3() {
+	BotStarter botStarter = new BotStarter();
+
+	BotState state = new BotState();
+	state.updateSettings("timebank", "10000");
+	state.updateSettings("time_per_move", "500");
+	state.updateSettings("player_names", "player1,player2");
+	state.updateSettings("your_bot", "player1");
+	state.updateSettings("field_height", "20");
+	state.updateSettings("field_width", "10");
+
+	state.updateState("player1", "round", "1");
+	state.updateState("player1", "this_piece_type", "S");
+	state.updateState("player1", "next_piece_type", "I");
+	state.updateState("player1", "this_piece_position", "3,-1");
+	state.updateState("player1", "row_points", "0");
+	state.updateState("player1", "combo", "0");
+	state.updateState("player1", "field", 
+		  "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,2,0,2,2,0,0,0,0,0;"
+		+ "2,2,2,2,0,0,0,2,2,2;");
+
+	System.out.println(state.getMyField());
+
+	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
+	System.out.println(moves);
+    }
 
     @Test
     public void testMatch55b740a11c687b361d5ba85e() {

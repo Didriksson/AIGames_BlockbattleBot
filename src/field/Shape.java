@@ -373,12 +373,24 @@ public class Shape {
 	    }
 	    for (Cell cell : getBlocks()) {
 		if (cell.hasCollision(field)) {
+		    if(isLeftPathOkay())
+		    {
+			move.moves.add(MoveType.RIGHT);
+			oneUp();
+			continue;
+		    }
+		    else if(isRightPathOkay()){
+			move.moves.add(MoveType.LEFT);
+			oneUp();
+			continue;
+		    }
 		    return Optional.empty();
 		}
+		else{
+		}
 	    }
-
-	    move.moves.add(MoveType.DOWN);
-	    oneUp();
+		move.moves.add(MoveType.DOWN);
+		oneUp();
 	}
 	
 	while (getLocation().x != startPosition.x) {
@@ -398,6 +410,33 @@ public class Shape {
 
 	setLocation(originalPosition.x, originalPosition.y);
 	return Optional.of(move);
+    }
+
+    private boolean isRightPathOkay() {
+	//Taking the bot down one step since it tried the one on top of the original location.
+	oneDown();
+	oneRight();
+	for(Cell cell : getBlocks()){
+	    if(cell.hasCollision(field)){
+		oneLeft();
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    private boolean isLeftPathOkay() {
+	//Taking the bot down one step since it tried the one on top of the original location.
+	oneDown();
+	oneLeft();
+	for(Cell cell : getBlocks()){
+	    if(cell.hasCollision(field)){
+		oneRight();
+		return false;
+	    }
+	}
+	return true;
+
     }
 
     public Field getField() {
