@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Set;
 
 import moves.Move;
 import moves.MoveType;
@@ -20,7 +19,7 @@ import field.Shape;
 import field.ShapeType;
 
 public class BotStarterTest {
-
+    
     @Test
     public void testMatch55b8855c1c687b361d5bb498() {
 
@@ -74,7 +73,8 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-		+ "2,0,0,0,0,0,0,0,0,0;" + "2,2,0,0,0,0,0,0,0,0;"
+		+ "2,0,0,0,0,0,0,0,0,0;"
+		+ "2,2,0,0,0,0,0,0,0,0;"
 		+ "2,0,0,0,0,0,0,0,0,0");
 
 	Field field = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
@@ -93,9 +93,9 @@ public class BotStarterTest {
 	shape.setLocation(1, 18);
 	System.out.println(shape.getFieldWithShape());
 	System.out.println(shape.getPathToCurrentPosition(new Point(3, -1)));
-	// ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
-	// assertEquals(MoveType.LEFT, moves.get(0));
-	// assertEquals(MoveType.LEFT, moves.get(19));
+	 ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
+	 assertEquals(MoveType.LEFT, moves.get(0));
+	 assertEquals(MoveType.LEFT, moves.get(19));
     }
 
     @Test
@@ -172,12 +172,12 @@ public class BotStarterTest {
 	state.updateSettings("field_width", "10");
 
 	state.updateState("player1", "round", "1");
-	state.updateState("player1", "this_piece_type", "S");
+	state.updateState("player1", "this_piece_type", "J");
 	state.updateState("player1", "next_piece_type", "I");
 	state.updateState("player1", "this_piece_position", "3,-1");
 	state.updateState("player1", "row_points", "0");
 	state.updateState("player1", "combo", "0");
-	state.updateState("player1", "field", 
+	state.updateState("player1", "field",
 		  "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" 
 		+ "0,0,0,0,0,0,0,0,0,0;"
@@ -194,12 +194,39 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" 
 		+ "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,2,0;"
+		+ "0,0,0,0,0,0,0,0,2,2;" 
+		+ "2,2,0,0,0,0,0,2,2,2;"
+		+ "2,2,0,0,0,0,0,0,2,2;");
+	
+	Field field =  new Field(10,20,"0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
 		+ "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" 
-		+ "0,2,0,2,2,0,0,0,0,0;"
-		+ "2,2,2,2,0,0,0,2,2,2;");
-
-	System.out.println(state.getMyField());
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" 
+		+ "0,0,0,0,0,0,0,0,2,0;"
+		+ "0,0,0,0,0,0,0,0,2,2;" 
+		+ "2,2,0,0,0,0,0,2,2,2;"
+		+ "2,2,0,0,0,0,0,0,2,2;");
+	
+	Shape shape = new Shape(ShapeType.J, field, new Point(3,-1));
+	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(shape, new Field(field));
+//	for(Shape s: points)
+//	    System.out.println(s.getLocation());
+	
+	
+//	System.out.println(state.getMyField());
 
 	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
 	System.out.println(moves);

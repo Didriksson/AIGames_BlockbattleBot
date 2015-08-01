@@ -18,6 +18,7 @@
 package field;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -210,40 +211,40 @@ public class Shape {
      * etc. We want a line piece to always have a location to the top left of
      * the shape e.g.
      */
-//    private void setMatrixOffset() {
-//	setMatrixOffSetX();
-//	setMatrixOffSetY();
-//    }
-//
-//    private void setMatrixOffSetY() {
-//	matrixOffsetY = 0;
-//	boolean emptyRow = true;
-//	for (int row = 0; row < size && emptyRow; row++) {
-//	    for (int col = 0; col < size; col++) {
-//		if (shape[col][row].isShape()) {
-//		    emptyRow = false;
-//		}
-//	    }
-//	    if (emptyRow)
-//		matrixOffsetY--;
-//
-//	}
-//    }
+    // private void setMatrixOffset() {
+    // setMatrixOffSetX();
+    // setMatrixOffSetY();
+    // }
+    //
+    // private void setMatrixOffSetY() {
+    // matrixOffsetY = 0;
+    // boolean emptyRow = true;
+    // for (int row = 0; row < size && emptyRow; row++) {
+    // for (int col = 0; col < size; col++) {
+    // if (shape[col][row].isShape()) {
+    // emptyRow = false;
+    // }
+    // }
+    // if (emptyRow)
+    // matrixOffsetY--;
+    //
+    // }
+    // }
 
-//    private void setMatrixOffSetX() {
-//	matrixOffsetX = 0;
-//	boolean emptyRow = true;
-//	for (int col = 0; col < size && emptyRow; col++) {
-//	    for (Cell row : shape[col]) {
-//		if (row.isShape()) {
-//		    emptyRow = false;
-//		    break;
-//		}
-//	    }
-//	    if (emptyRow)
-//		matrixOffsetX--;
-//	}
-//    }
+    // private void setMatrixOffSetX() {
+    // matrixOffsetX = 0;
+    // boolean emptyRow = true;
+    // for (int col = 0; col < size && emptyRow; col++) {
+    // for (Cell row : shape[col]) {
+    // if (row.isShape()) {
+    // emptyRow = false;
+    // break;
+    // }
+    // }
+    // if (emptyRow)
+    // matrixOffsetX--;
+    // }
+    // }
 
     /**
      * Uses the shape's current orientation and position to set the actual
@@ -366,33 +367,41 @@ public class Shape {
 	Move move = new Move();
 	Point originalPosition = new Point(getLocation());
 	boolean inbounds = true;
+
+	// Adjusting the path up or down.
 	while (inbounds) {
 	    if (getLocation().y < 0) {
 		inbounds = false;
 		break;
 	    }
-	    for (Cell cell : getBlocks()) {
-		if (cell.hasCollision(field)) {
-		    if(isLeftPathOkay())
-		    {
-			move.moves.add(MoveType.RIGHT);
-			oneUp();
-			continue;
-		    }
-		    else if(isRightPathOkay()){
-			move.moves.add(MoveType.LEFT);
-			oneUp();
-			continue;
-		    }
-		    return Optional.empty();
+
+	    //So now we know that the path UP was not possible. Let's try it left or right!
+	    if (shapeHasCollision()) {
+		if(rightAndDownEmpty())
+		{
+		    oneDown();
+		    oneRight();
+		    move.moves.add(MoveType.LEFT);
+		}
+		else if(leftAndDownEmpty()){
+		    oneDown();
+		    oneLeft();
+		    move.moves.add(MoveType.RIGHT);
 		}
 		else{
+		    return Optional.empty();
 		}
 	    }
+	    
+	    else
+	    {
 		move.moves.add(MoveType.DOWN);
 		oneUp();
+	    }
 	}
-	
+
+	// Adjusting the path left/right in the beginning to get to the initial
+	// position.
 	while (getLocation().x != startPosition.x) {
 	    if (getLocation().x - startPosition.x > 0) {
 		oneLeft();
@@ -403,6 +412,7 @@ public class Shape {
 	    }
 	}
 
+	// Making sure that we rotate into correct position.
 	for (int i = 0; i < rotation; i++)
 	    move.moves.add(MoveType.TURNRIGHT);
 
@@ -412,32 +422,29 @@ public class Shape {
 	return Optional.of(move);
     }
 
-    private boolean isRightPathOkay() {
-	//Taking the bot down one step since it tried the one on top of the original location.
-	oneDown();
-	oneRight();
-	for(Cell cell : getBlocks()){
-	    if(cell.hasCollision(field)){
-		oneLeft();
-		return false;
-	    }
-	}
-	return true;
-    }
-
-    private boolean isLeftPathOkay() {
-	//Taking the bot down one step since it tried the one on top of the original location.
+    private boolean leftAndDownEmpty() {
 	oneDown();
 	oneLeft();
-	for(Cell cell : getBlocks()){
-	    if(cell.hasCollision(field)){
-		oneRight();
-		return false;
-	    }
-	}
-	return true;
-
+	boolean empty = !shapeHasCollision();
+	oneUp();
+	oneRight();
+	return empty;
     }
+
+    private boolean rightAndDownEmpty() {
+	oneDown();
+	oneRight();
+	boolean empty = !shapeHasCollision();
+	oneUp();
+	oneLeft();
+	return empty;
+    }
+
+    private boolean shapeHasCollision() {
+	return Arrays.asList(getBlocks()).parallelStream().filter(e-> e.hasCollision(field)).findAny().isPresent();
+    }
+
+
 
     public Field getField() {
 	return field;

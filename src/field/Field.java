@@ -152,22 +152,22 @@ public class Field {
     public int evaluate() {
 	
 	int emptyCells = getNumberOfEmptyCells() * 10;
-	int isolatedCells = getNumberOfIsolatedCells() * 10;
+	int isolatedCells = getNumberOfIsolatedCells() * 15;
 	int semiIsolatedCells = getSemiIsolatedCells() * 7;
-	int heigthOfBoard = getHeightOfBoard() * 5;
+	int heigthOfBoard = getHeightOfBoard() * 7;
 	int compactParameterHorizontal = horizontalCompactChecker() * 5;
 	int compactParameterVertical = verticalCompactChecker() * 5;
 	int totalScoreDeduction = compactParameterHorizontal + compactParameterVertical + isolatedCells + semiIsolatedCells + heigthOfBoard;
 	int finalScore = emptyCells - totalScoreDeduction;
 	
-	System.err.println("Emptycells: " + emptyCells + "\nIsolated: "
-		+ isolatedCells + "\nHeight: " + heigthOfBoard
-		+ semiIsolatedCells+ "\nSemi iso: " + semiIsolatedCells
-		+ "\nCompact horizontal: " + compactParameterHorizontal
-		+ "\nCompact vertical: " + compactParameterVertical
-		+ "\nFINAL: " + finalScore);
-
-	System.err.println();
+//	System.err.println("Emptycells: " + emptyCells + "\nIsolated: "
+//		+ isolatedCells + "\nHeight: " + heigthOfBoard
+//		+ semiIsolatedCells+ "\nSemi iso: " + semiIsolatedCells
+//		+ "\nCompact horizontal: " + compactParameterHorizontal
+//		+ "\nCompact vertical: " + compactParameterVertical
+//		+ "\nFINAL: " + finalScore);
+//
+//	System.err.println();
 
 	return finalScore;
     }
