@@ -367,6 +367,8 @@ public class Shape {
 	Move move = new Move();
 	Point originalPosition = new Point(getLocation());
 	boolean inbounds = true;
+	boolean triedLeft = false;
+	boolean triedRight = false;
 
 	// Adjusting the path up or down.
 	while (inbounds) {
@@ -374,16 +376,18 @@ public class Shape {
 		inbounds = false;
 		break;
 	    }
-
+	    
 	    //So now we know that the path UP was not possible. Let's try it left or right!
 	    if (shapeHasCollision()) {
-		if(rightAndDownEmpty())
+		if(rightAndDownEmpty() && !triedRight)
 		{
+		    triedRight = true;
 		    oneDown();
 		    oneRight();
 		    move.moves.add(MoveType.LEFT);
 		}
-		else if(leftAndDownEmpty()){
+		else if(leftAndDownEmpty() && !triedLeft){
+		    triedLeft = true;
 		    oneDown();
 		    oneLeft();
 		    move.moves.add(MoveType.RIGHT);

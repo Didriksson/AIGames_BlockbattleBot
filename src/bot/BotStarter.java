@@ -60,7 +60,6 @@ public class BotStarter {
     public ArrayList<MoveType> getMoves(BotState state, long timeout) {
 	fm.checkIfActiveShapeOnField(state.getMyField());
 	ArrayList<Move> moves = new ArrayList<Move>();
-
 	getAllPossibleMoves(state, moves);
 
 	for (Move m : moves) {
@@ -101,8 +100,8 @@ public class BotStarter {
 		    shape.turnRight();
 
 		ArrayList<Shape> points = getPossiblePositionsForPiece(shape, new Field(state.getMyField()));
-		    
 		for (Shape p : points) {
+		    System.out.println(p.getLocation() +" "+ rotated);
 		    Optional<Move> move = getPathToShapesPosition(p,
 			    state.getShapeLocation());
 		    if (move.isPresent()) {

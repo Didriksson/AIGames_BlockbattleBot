@@ -76,8 +76,7 @@ public class EvaluateTest {
 	
     }
     
-    
-    
+
     @Test
     public void Match55b8acaa35ec1d4039cf161c(){
 	Field bad = new Field(10, 20, 
