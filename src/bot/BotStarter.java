@@ -17,19 +17,12 @@
 
 package bot;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Optional;
 
 import moves.Move;
 import moves.MoveType;
 import field.Cell;
-import field.Field;
-import field.FieldManipulator;
 import field.Shape;
-import field.ShapeType;
 
 /**
  * BotStarter class
@@ -41,80 +34,19 @@ import field.ShapeType;
  */
 
 public class BotStarter {
-    FieldManipulator fm;
-    HashMap<ShapeType, Integer> numberOfRotations;
-
+    MoveEvaluator evaluator;
+    
     public BotStarter() {
-	fm = new FieldManipulator();
-	numberOfRotations = new HashMap<ShapeType, Integer>();
-	numberOfRotations.put(ShapeType.I, 1);
-	numberOfRotations.put(ShapeType.J, 3);
-	numberOfRotations.put(ShapeType.L, 3);
-	numberOfRotations.put(ShapeType.O, 0);
-	numberOfRotations.put(ShapeType.S, 1);
-	numberOfRotations.put(ShapeType.T, 3);
-	numberOfRotations.put(ShapeType.Z, 1);
-
+	evaluator = new MoveEvaluator();
     }
 
     public ArrayList<MoveType> getMoves(BotState state, long timeout) {
-	fm.checkIfActiveShapeOnField(state.getMyField());
-	ArrayList<Move> moves = new ArrayList<Move>();
-	getAllPossibleMoves(state, moves);
-
-	for (Move m : moves) {
-	    m.score = evaluateMove(state, m);
-	}
-
-	// System.out.println(s.getLocation() + "\n"+s.getFieldWithShape());
-
-	Shape s = new Shape(ShapeType.T, new Field(state.getMyField()),	new Point(state.getShapeLocation()));
-	s.performMoves(moves.get(0).moves);
-
-	moves.sort(new Comparator<Move>() {
-
-	    @Override
-	    public int compare(Move o1, Move o2) {
-		return o1.score < o2.score ? +1 : o1.score > o2.score ? -1 : 0;
-	    }
-	});
-
-	System.err
-		.println("Target coordinate: " + moves.get(0).targetCoordinate
-			+ " Shapetype: " + state.getCurrentShape()
-			+ " Current round: " + state.getRound()
-			+ " with a score of : " + moves.get(0).score);
-
-	return moves.get(0).moves;
+	
+	Move move = evaluator.getBestMove(state);
+	return move.moves;
     }
 
-    private void getAllPossibleMoves(BotState state, ArrayList<Move> moves) {
-	int rotated = numberOfRotations.get(state.getCurrentShape());
-	do {
-	    {
-		Shape shape = new Shape(state.getCurrentShape(), new Field(
-			state.getMyField()),
-			new Point(state.getShapeLocation()));
-		for (int i = rotated; i < numberOfRotations.get(state
-			.getCurrentShape()); i++)
-		    shape.turnRight();
 
-		ArrayList<Shape> points = getPossiblePositionsForPiece(shape, new Field(state.getMyField()));
-		for (Shape p : points) {
-		    Optional<Move> move = getPathToShapesPosition(p,
-			    state.getShapeLocation());
-		    if (move.isPresent()) {
-			move.get().targetCoordinate = new Point(p.getLocation());
-			moves.add(move.get());
-		    }
-		}
-		
-		points = null;
-
-		rotated--;
-	    }
-	} while (rotated >= 0);
-    }
 
     private void removeAllPointsAffectingTetrisColumn(ArrayList<Shape> points) {
 	ArrayList<Shape> pointsToRemove = new ArrayList<Shape>();
@@ -128,14 +60,6 @@ public class BotStarter {
 	points.removeAll(pointsToRemove);
     }
 
-    public int evaluateMove(BotState state, Move move) {
-	Field field = new Field(state.getMyField());
-	Shape shape = new Shape(state.getCurrentShape(), field, new Point(
-		state.getShapeLocation()));
-	shape.performMoves(move.moves);
-	fm.insertShape(shape, field);
-	return field.evaluate();
-    }
 
     public static void main(String[] args) {
 
@@ -143,34 +67,5 @@ public class BotStarter {
 	parser.run();
     }
 
-    // Tries the positions available FOR THE CURRENT ROTATION.
-    public ArrayList<Shape> getPossiblePositionsForPiece(Shape shape,
-	    Field field) {
-	ArrayList<Shape> shapes = new ArrayList<Shape>();
-	shape = new Shape(shape);
-	//Initial is -2 since some shapes will have an empty column if rotated.
-	int colStart = -2;
-	
-	for (int row = field.getHeight() - 1; row > 0
-		&& row >= getRandHeight(field, shape); row--) {
-	    for (int col = colStart; col <= field.getWidth(); col++) {
-		shape.setLocation(col, row);
-		if (shape.checkIfAllCellsInboundsAndEmpty()
-			&& !shape.isFloating()) {
-		    shapes.add(new Shape(shape));
-		}
-	    }
-	}
-	return shapes;
-    }
-
-    private int getRandHeight(Field field, Shape shape) {
-	return field.getHeight()
-		- (field.getHeightOfBoard() + shape.getHeightOfRotationMatrix());
-    }
-
-    public Optional<Move> getPathToShapesPosition(Shape shape,
-	    Point startPosition) {
-	return shape.getPathToCurrentPosition(startPosition);
-    }
+ 
 }

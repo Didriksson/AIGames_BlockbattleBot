@@ -102,13 +102,23 @@ public class Shape {
 	}
     }
 
-    public String getFieldWithShape() {
+    public String getFieldWithShapeAsString() {
 	Field copyOfField = new Field(field);
 	for (Cell cell : blocks) {
 	    copyOfField.setCell(cell);
 	}
 	return copyOfField.toString();
     }
+    
+
+    public Field getFieldWithShape() {
+	Field copyOfField = new Field(field);
+	for (Cell cell : blocks) {
+	    copyOfField.setCell(cell);
+	}
+	return copyOfField;
+    }
+    
 
     /**
      * Rotates the shape counter-clockwise
@@ -452,5 +462,18 @@ public class Shape {
 
     public Field getField() {
 	return field;
+    }
+
+    public int getHeightOfShape() {
+	int maxY = -999999;
+	int minY =  999999;
+
+	for(Cell cell : getBlocks()){
+	    if(cell.getLocation().y > maxY)
+		maxY = cell.getLocation().y;
+	    if(cell.getLocation().y < minY)
+		minY = cell.getLocation().y;
+	}
+	return maxY - minY + 1;
     }
 }

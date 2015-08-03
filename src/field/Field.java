@@ -19,9 +19,7 @@ package field;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Field class
@@ -149,32 +147,29 @@ public class Field {
 
     }
 
-    public int evaluate() {
-	
-	int emptyCells = getNumberOfEmptyCells() * 10;
-	int isolatedCells = getNumberOfIsolatedCells() * 10;
-	int semiIsolatedCells = getSemiIsolatedCells() * 10;
-	int heigthOfBoard = getHeightOfBoard() * 10;
-//	int compactParameterHorizontal = horizontalCompactChecker() * 10;
-	int compactParameterVertical = verticalCompactChecker() * 10;
-	int totalScoreDeduction = compactParameterVertical + isolatedCells + semiIsolatedCells + heigthOfBoard;
-	int finalScore = emptyCells - totalScoreDeduction;
-
-	
-//	System.err.println("Emptycells: " + emptyCells + "\nIsolated: "
-//		+ isolatedCells + "\nHeight: " + heigthOfBoard
-//		+ semiIsolatedCells+ "\nSemi iso: " + semiIsolatedCells
-//		+ "\nCompact horizontal: " + compactParameterHorizontal
-//		+ "\nCompact vertical: " + compactParameterVertical
-//		+ "\nFINAL: " + finalScore);
-//
-//	System.err.println();
-
-	return finalScore;
-
-    }
     
-    public int getSemiIsolatedCells(){
+    public int getWellSums(){
+	int wellSum = 0;
+	for (int col = 1; col < width; col++) {
+	    boolean isWell = true;
+	    for (int row = height-1; row >= 0 && isWell; row--) {
+		Cell middle = getCell(col, row);
+		Cell left = getCell(col-1, row);
+		Cell right = getCell(col+1, row);
+		if(middle.isEmpty() && !left.isEmpty() && !right.isEmpty()){
+		    wellSum += (height - row);
+		}
+		else{
+		    isWell = false;;
+		}
+		
+	    }
+	}
+	return wellSum;
+    }
+
+
+    public int getIsolatedCells(){
 	int sum = 0;
 	for (int i = 0; i < getHeight(); i++) {
 	    sum += getNumberOfIsolatedCellsForRow(i);
@@ -185,7 +180,7 @@ public class Field {
     // This iterates through the board more than necessary however for
     // readability I am keeping the empty rows function - could be baked into
     // this one.
-    public int horizontalCompactChecker() {
+    public int rowTransitions() {
 	int blockChanges = 0;
 	for (int row = 0; row < height; row++) {
 	    boolean trackingBlock = true;
@@ -224,7 +219,7 @@ public class Field {
     // This iterates through the board more than necessary however for
     // readability I am keeping the empty cols function - could be baked into
     // this one.
-    public int verticalCompactChecker() {
+    public int columnTransitions() {
 	int blockChanges = 0;
 	for (int col = 0; col < width; col++) {
 	    boolean trackingBlock = false;
@@ -273,7 +268,7 @@ public class Field {
 	return 0;
     }
 
-    public int getNumberOfIsolatedCells() {
+    public int getNumberFullyIsolatedCells() {
 	int isolatedCells = 0;
 	Cell left;
 	Cell middle;

@@ -13,38 +13,74 @@ import org.junit.Test;
 
 import bot.BotStarter;
 import bot.BotState;
+import bot.MoveEvaluator;
 import field.Field;
-import field.FieldManipulator;
 import field.Shape;
 import field.ShapeType;
 
 public class BotStarterTest {
 
     @Test
-    public void testMatch55b8855c1c687b361d5bb498() {
-
-	BotStarter botStarter = new BotStarter();
-
-	Field bad = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
+    public void testLandingHeight() {
+	Field field = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,2,2,2,2,0,0,0;"
-		+ "0,0,2,2,2,2,2,2,2,0;" + "0,2,2,2,2,2,2,2,2,2;"
-		+ "0,2,2,2,2,2,2,0,2,2;" + "0,2,2,2,2,2,2,2,2,2;"
-		+ "0,2,2,2,2,2,2,2,2,2;" + "0,2,2,2,2,2,2,2,2,2;"
-		+ "0,2,2,2,2,2,2,0,2,2;" + "0,2,2,2,2,2,2,2,2,2;"
-		+ "3,3,3,3,3,3,3,3,3,3");
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,2,0,0,0,0,0;" + "0,0,0,0,2,0,0,0,0,0;"
+		+ "0,0,0,0,2,0,0,0,0,0");
+	Shape shape = new Shape(ShapeType.O, field, new Point(3, -1));
+	shape.setLocation(4, 15);
 
-	Shape shape = new Shape(ShapeType.I, new Field(bad), new Point(3, -1));
-	shape.turnRight();
-	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(
-		shape, new Field(bad));
+	MoveEvaluator eval = new MoveEvaluator();
+	int h = eval.getLandingHeight(shape);
+	assertEquals(4, h);
+    }
 
-	shape.setLocation(7, 8);
+    @Test
+    public void testWellSums() {
+	Field field = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,2,0,2,0;" + "2,2,2,2,0,2,2,0,2,2;"
+		+ "2,2,2,2,0,2,2,0,2,2");
+
+	assertEquals(9, field.getWellSums());
+    }
+
+    @Test
+    public void testRowsEliminated() {
+	Field field = new Field(10, 20, "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "2,2,2,2,0,0,2,2,2,2;"
+		+ "2,2,2,2,0,0,2,2,2,2");
+	Shape shape = new Shape(ShapeType.O, field, new Point(3, -1));
+	shape.setLocation(4, 18);
+
+	MoveEvaluator eval = new MoveEvaluator();
+	int h = eval.getRowsEliminated(shape);
+	// System.out.println(shape.getFieldWithShape());
+	assertEquals(2, h);
 
     }
+
 
     @Test
     public void timedOutTest() {
@@ -64,54 +100,20 @@ public class BotStarterTest {
 	state.updateState("player1", "this_piece_position", "3,-1");
 	state.updateState("player1", "row_points", "0");
 	state.updateState("player1", "combo", "0");
-	state.updateState("player1", "field", 
-		  "0,0,0,1,1,1,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,2,2,2,2;"
-		+ "0,0,0,0,0,0,0,0,2,0;"
-		+ "0,0,0,0,0,0,0,2,2,2;"
-		+ "0,0,0,2,2,2,2,2,0,0;"
-		+ "2,2,2,2,2,0,0,0,0,0;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
+	state.updateState("player1", "field", "0,0,0,1,1,1,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,2,2,2,2;"
+		+ "0,0,0,0,0,0,0,0,2,0;" + "0,0,0,0,0,0,0,2,2,2;"
+		+ "0,0,0,2,2,2,2,2,0,0;" + "2,2,2,2,2,0,0,0,0,0;"
+		+ "3,3,3,3,3,3,3,3,3,3;" + "3,3,3,3,3,3,3,3,3,3;"
+		+ "3,3,3,3,3,3,3,3,3,3;" + "3,3,3,3,3,3,3,3,3,3;"
+		+ "3,3,3,3,3,3,3,3,3,3;" + "3,3,3,3,3,3,3,3,3,3;"
+		+ "3,3,3,3,3,3,3,3,3,3;" + "3,3,3,3,3,3,3,3,3,3;"
 		+ "3,3,3,3,3,3,3,3,3,3");
-	
-	Field field = new Field(
-		10,
-		20,
-		"0,0,0,1,1,1,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,2,2,2,2;"
-		+ "0,0,0,0,0,0,0,0,2,0;"
-		+ "0,0,0,0,0,0,0,2,2,2;"
-		+ "0,0,0,2,2,2,2,2,0,0;"
-		+ "2,2,2,2,2,0,0,0,0,0;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3;"
-		+ "3,3,3,3,3,3,3,3,3,3");
-	
+
 	botStarter.getMoves(state, 10000);
-	
+
     }
 
     @Test
@@ -152,17 +154,15 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
-		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
+		+ "0,0,0,0,0,0,0,0,0,0;" + "2,2,2,2,2,2,2,2,2,2;"
 		+ "2,0,0,0,0,0,0,0,0,0;" + "2,2,0,0,0,0,0,0,0,0;"
 		+ "2,0,0,0,0,0,0,0,0,0");
 
 	Shape shape = new Shape(ShapeType.T, new Field(field), new Point(3, -1));
 	shape.setLocation(1, 18);
-	System.out.println(shape.getFieldWithShape());
+	System.out.println(shape.getFieldWithShapeAsString());
 	System.out.println(shape.getPathToCurrentPosition(new Point(3, -1)));
 	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
-	assertEquals(MoveType.LEFT, moves.get(0));
-	assertEquals(MoveType.LEFT, moves.get(19));
     }
 
     @Test
@@ -213,7 +213,7 @@ public class BotStarterTest {
 	Shape shape = new Shape(ShapeType.O, new Field(field), new Point(3, -1));
 
 	shape.performMoves(moves);
-	System.out.println(shape.getFieldWithShape());
+	System.out.println(shape.getFieldWithShapeAsString());
     }
 
     @Test
@@ -258,22 +258,12 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,2,2;" + "2,2,0,0,0,0,0,2,2,2;"
 		+ "2,2,0,0,0,0,0,0,2,2;");
 
-	Shape shape = new Shape(ShapeType.J, field, new Point(3, -1));
-	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(
-		shape, new Field(field));
-	// for(Shape s: points)
-	// System.out.println(s.getLocation());
-
-	// System.out.println(state.getMyField());
-
 	ArrayList<MoveType> moves = botStarter.getMoves(state, 10000);
 	System.out.println(moves);
     }
 
     @Test
     public void testMatch55b740a11c687b361d5ba85e() {
-	BotStarter botStarter = new BotStarter();
-	FieldManipulator fm = new FieldManipulator();
 
 	BotState state = new BotState();
 	state.updateSettings("timebank", "10000");
@@ -352,10 +342,6 @@ public class BotStarterTest {
 	// fm.insertShape(newShape, field);
 	// System.out.println(move.moves);
 	// System.out.println(field);
-
-	Move botsMove;
-	Move myMove;
-
     }
 
     @Test
@@ -448,7 +434,7 @@ public class BotStarterTest {
 
     @Test
     public void getLocationsForPiece() {
-	BotStarter botStarter = new BotStarter();
+	MoveEvaluator eval = new MoveEvaluator();
 	Shape shape;
 	ArrayList<Shape> points;
 	Field field = new Field(10, 20, "" + "0,0,0,0,0,0,0,0,0,0;"
@@ -463,33 +449,10 @@ public class BotStarterTest {
 		+ "0,0,0,0,0,0,0,0,0,0;" + "0,0,0,0,0,0,0,0,0,0;"
 		+ "0,0,0,0,0,0,0,0,0,0");
 
-	// shape = new Shape(ShapeType.O, field, new Point(3, -1));
-	//
-	// points = botStarter.getPossiblePositionsForPiece(
-	// shape, field);
-	// assertEquals(9, points.size());
-	//
-	// shape = new Shape(ShapeType.Z, field, new Point(3, -1));
-	// points = botStarter.getPossiblePositionsForPiece(shape, field);
-	// assertEquals(8, points.size());
-	//
-	// shape.turnLeft();
-	// points = botStarter.getPossiblePositionsForPiece(shape, field);
-	// assertEquals(9, points.size());
-	//
-	// shape = new Shape(ShapeType.I, field, new Point(3, -1));
-	// points = botStarter.getPossiblePositionsForPiece(shape, field);
-	// assertEquals(7, points.size());
-	//
-
 	shape = new Shape(ShapeType.I, field, new Point(3, -1));
 	shape.turnLeft();
 
-	// shape.setLocation(8, 16);
-	// System.out.println("8, 16: " +
-	// shape.checkIfAllCellsInboundsAndEmpty());
-
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
+	points = eval.getPossiblePositionsForPiece(shape, field);
 	// for(Shape s : points)
 	// System.out.println(s.getLocation());
 
@@ -508,14 +471,13 @@ public class BotStarterTest {
 		+ "2,2,2,2,2,2,2,2,2,2");
 	shape = new Shape(ShapeType.I, field, new Point(0, 0));
 	shape.turnLeft();
-	ArrayList<Shape> list = botStarter.getPossiblePositionsForPiece(shape,
-		field);
+	ArrayList<Shape> list = eval.getPossiblePositionsForPiece(shape, field);
 	assertEquals(2, list.size());
     }
 
     @Test
     public void findPathToPoint() {
-	BotStarter botStarter = new BotStarter();
+	MoveEvaluator eval = new MoveEvaluator();
 
 	Field field;
 	field = new Field(10, 20, "" + "2,2,2,2,2,2,2,2,2,2;"
@@ -532,9 +494,9 @@ public class BotStarterTest {
 
 	Shape shape = new Shape(ShapeType.I, field, new Point(4, -1));
 	shape.turnLeft();
-	ArrayList<Shape> points = botStarter.getPossiblePositionsForPiece(
-		shape, field);
-	Optional<Move> move = botStarter.getPathToShapesPosition(points.get(0),
+	ArrayList<Shape> points = eval.getPossiblePositionsForPiece(shape,
+		field);
+	Optional<Move> move = eval.getPathToShapesPosition(points.get(0),
 		new Point(4, -1));
 	assertEquals(false, move.isPresent());
 
@@ -552,9 +514,8 @@ public class BotStarterTest {
 
 	shape = new Shape(ShapeType.I, field, new Point(3, -1));
 	shape.turnLeft();
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
-	move = botStarter.getPathToShapesPosition(points.get(0), new Point(3,
-		-1));
+	points = eval.getPossiblePositionsForPiece(shape, field);
+	move = eval.getPathToShapesPosition(points.get(0), new Point(3, -1));
 	assertEquals(true, move.isPresent());
 
 	field = new Field(10, 20, "" + "0,0,0,0,0,0,0,0,0,0;"
@@ -570,9 +531,8 @@ public class BotStarterTest {
 		+ "2,2,2,2,2,2,2,2,2,2");
 
 	shape = new Shape(ShapeType.J, field, new Point(4, -1));
-	points = botStarter.getPossiblePositionsForPiece(shape, field);
-	move = botStarter.getPathToShapesPosition(points.get(0), new Point(4,
-		-1));
+	points = eval.getPossiblePositionsForPiece(shape, field);
+	move = eval.getPathToShapesPosition(points.get(0), new Point(4, -1));
 	assertEquals(true, move.isPresent());
 
     }
